@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 import json
-from datetime import datetime
+import datetime
 from transformation.data_validation import validate_dataframe, clean_dataframe, print_validation_report
 from ingestion.kafka_consumer import get_sample_events
 from ingestion.api_ingestion import get_mock_api_response, api_response_to_dataframe
@@ -66,7 +66,7 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
 
     # Enrich: add pipeline metadata
     df["pipeline_layer"]     = "silver"
-    df["processed_at"]       = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    df["processed_at"]       = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     df["pipeline_version"]   = "1.0.0"
 
     logger.info(f"Transformation complete. {len(df)} rows ready for load.")
@@ -112,7 +112,7 @@ def run_pipeline(source: str = "kafka") -> pd.DataFrame:
     """
     Full ETL pipeline run: Extract → Transform → Load → Gold
     """
-    start = datetime.utcnow()
+    start = datetime.datetime.now(datetime.UTC)
     logger.info("=" * 50)
     logger.info("   DISNEY CONTENT & LABOR ETL PIPELINE START")
     logger.info("=" * 50)
@@ -125,7 +125,7 @@ def run_pipeline(source: str = "kafka") -> pd.DataFrame:
     # Gold layer
     gold = generate_gold_layer(silver_df)
 
-    end = datetime.utcnow()
+    end = datetime.datetime.now(datetime.UTC)
     duration = (end - start).total_seconds()
 
     logger.info(f"Pipeline completed in {duration:.2f}s")

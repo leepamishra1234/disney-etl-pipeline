@@ -75,7 +75,7 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=["content_id", "department"])
 
     # Strip string columns
-    str_cols = df.select_dtypes(include="object").columns
+    str_cols = df.select_dtypes(include="str").columns
     for col in str_cols:
         df[col] = df[col].str.strip()
 
